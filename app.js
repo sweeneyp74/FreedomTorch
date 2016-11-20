@@ -45,9 +45,13 @@ var router = express.Router();
 //  Route Handlers
 // ------------------------------------------------------------------------
 
-app.use('/', require('./routes/app'));
+app.get('/auth', (req, res) => {
+  res.status(200).sendFile('public/auth.html' , { root : __dirname});
+});
 
 app.use('/typeform', require('./routes/typeform'));
+
+app.use('/auth', require('./routes/auth'));
 
 
 
