@@ -16,7 +16,7 @@
     h1, h4 { color: #fff }
 
 
-    .torchWrapper {background-image: url(/flamescale.png); 
+    .torchWrapper {background-image: url(/flamescale.png);
       background-size: contain;
       background-repeat: no-repeat;
       background-position: right; }
@@ -196,6 +196,10 @@
 
   var score = getUrlParameter('score');
   // alert(score)
+  if(score){
+    $torch = $('#torch');
+    $torch.css('width': '10%');
+  }
 
     </script>
 
