@@ -18,6 +18,7 @@ html, body { height: 100% }
 <script>
   var uid;
   var friends;
+  var name = "user";
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
@@ -28,28 +29,19 @@ html, body { height: 100% }
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
+      console.log("very nice");
       uid = response.authResponse.userID;
-      friends = getFriends();
       testAPI();
-      var butt = document.getElementById('quiz');
-      butt.parentNode.removeChild(butt);
+      getFriends();
+
+
     } else if (response.status === 'not_authorized') {
-      var butt = document.getElementById('login-but');
-      butt.parentNode.removeChild(butt);
-      butt = document.getElementById('status');
-      butt.parentNode.removeChild(butt);
+      console.log("not good1");
       // The person is logged into Facebook, but not your app.
-      document.getElementById('status').innerHTML = 'Please log ' +
-        'into this app.';
     } else {
-      var butt = document.getElementById('login-but');
-      butt.parentNode.removeChild(butt);
-      butt = document.getElementById('status');
-      butt.parentNode.removeChild(butt);
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
-      document.getElementById('status').innerHTML = 'Please log ' +
-        'into Facebook.';
+      console.log("not good2");
     }
   }
 
@@ -104,8 +96,9 @@ html, body { height: 100% }
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
-      document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
+      var name = response.name;
+      document.getElementById('welcome').innerHTML =
+        'Welcome, ' + response.name + '!';
     });
   }
 
@@ -119,6 +112,18 @@ function getFriends(){
 
         console.log(uid);
         console.log(friends);
+
+        var index = 0;
+        var htmlString = ""
+        while(index < friends.length)
+        {
+          htmlString = htmlString + friends[index];
+          index = index + 1
+        }
+
+        document.getElementById('content').innerHTML = '<h1>Welcome ' + name + '</h1>';
+
+
       }
     }
 );
@@ -127,18 +132,10 @@ function getFriends(){
 
 
 </script>
+<div id="welcome" class="content">
 
-<!--
-  Below we include the Login Button social plugin. This button uses
-  the JavaScript SDK to present a graphical Login button that triggers
-  the FB.login() function when clicked.
--->
-
-<fb:login-button id="login-but" scope="public_profile,email,user_friends" onlogin="checkLoginState();">
-</fb:login-button>
-
-<div id="status">
 </div>
-<iframe id="quiz" src="https://chaz18.typeform.com/to/LfqStJ?" width="100%" height="98%"></iframe>
+<div id="content" class="content">
 
+</div>
 </body>
