@@ -17,11 +17,25 @@
 'use strict';
 
 const express = require('express');
+var firebase = require("firebase");
 const app = express();
 
 app.get('/', (req, res) => {
   res.status(200).sendFile('public/index.html' , { root : __dirname});
 });
+
+
+// Initialize Firebase
+
+  var config = {
+    // apiKey: "<API_KEY>",
+    // authDomain: "<PROJECT_ID>.firebaseapp.com",
+    databaseURL: "https://freedom-torch.firebaseio.com",
+    // storageBucket: "<BUCKET>.appspot.com",
+    // messagingSenderId: "<SENDER_ID>",
+  };
+  firebase.initializeApp(config);
+
 
 
 // Kev
@@ -30,6 +44,8 @@ var router = express.Router();
 // ------------------------------------------------------------------------
 //  Route Handlers
 // ------------------------------------------------------------------------
+
+app.use('/', require('./routes/app'));
 
 app.use('/typeform', require('./routes/typeform'));
 
