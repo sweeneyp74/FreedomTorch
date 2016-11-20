@@ -45,8 +45,14 @@ var router = express.Router();
 //  Route Handlers
 // ------------------------------------------------------------------------
 
+app.use(express.static(__dirname + '/assets'));
+
 app.get('/auth', (req, res) => {
   res.status(200).sendFile('public/auth.html' , { root : __dirname});
+});
+
+app.get('/dashboard', (req, res) => {
+  res.status(200).sendFile('public/dashboard.html' , { root : __dirname});
 });
 
 app.use('/typeform', require('./routes/typeform'));
