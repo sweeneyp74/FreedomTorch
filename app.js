@@ -53,6 +53,8 @@ app.use('/typeform', require('./routes/typeform'));
 
 app.use('/auth', require('./routes/auth'));
 
+app.use('/authRouter', require('./routes/authRouter'));
+
 
 
 // ------------------------------------------------------------------------
