@@ -23,7 +23,23 @@ app.get('/', (req, res) => {
   res.status(200).sendFile('public/index.html' , { root : __dirname});
 });
 
-// Start the server
+
+// Kev
+var router = express.Router();
+
+// ------------------------------------------------------------------------
+//  Route Handlers
+// ------------------------------------------------------------------------
+
+app.use('/typeform', require('./routes/typeform'));
+
+
+
+// ------------------------------------------------------------------------
+//  Start the server
+// ------------------------------------------------------------------------
+
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
