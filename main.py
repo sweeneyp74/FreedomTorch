@@ -29,8 +29,29 @@ class DataObject(db.Model):
 class MainPage(webapp2.RequestHandler):
 	def get(self,urlKey):
 		templateValues = {}
-		path = os.path.join(os.path.dirname(__file__), 'home.html')
+		path = os.path.join(os.path.dirname(__file__), 'html/home.html')
 		self.response.out.write(template.render(path, templateValues))
+
+
+# ---------------------------------------------------------------------
+# Auth Page
+# ---------------------------------------------------------------------
+
+class AuthPage(webapp2.RequestHandler):
+	def get(self,urlKey):
+		templateValues = {}
+		path = os.path.join(os.path.dirname(__file__), 'html/auth.html')
+		self.response.out.write(template.render(path, templateValues))
+
+# ---------------------------------------------------------------------
+# Me Page
+# ---------------------------------------------------------------------
+
+class MePage(webapp2.RequestHandler):
+    def get(self,urlKey):
+        templateValues = {}
+        path = os.path.join(os.path.dirname(__file__), 'html/me.html')
+        self.response.out.write(template.render(path, templateValues))
 
 
 # ---------------------------------------------------------------------
@@ -46,7 +67,7 @@ class PostHandler(webapp2.RequestHandler):
         # self.request.remote_addr
 
 		templateValues = {}
-		path = os.path.join(os.path.dirname(__file__), 'translated.html')
+		path = os.path.join(os.path.dirname(__file__), 'html/translated.html')
 		self.response.out.write(template.render(path, templateValues))
 
 
@@ -59,7 +80,7 @@ class NotFoundPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(404)
 		templateValues = {'BASE_URL':config.getRootURL()}
-		path = os.path.join(os.path.dirname(__file__), '404.html')
+		path = os.path.join(os.path.dirname(__file__), 'html/404.html')
 		self.response.out.write(template.render(path, templateValues))
 
 # ---------------------------------------------------------------------
@@ -67,6 +88,8 @@ class NotFoundPageHandler(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
 							  ('/post/(.*)', PostHandler),
 							  ('/()', MainPage),
+                              ('/(auth)', AuthPage),
+                              ('/(me)', MePage),
 							  ('/.*', NotFoundPageHandler)],
                               debug=False)
 
