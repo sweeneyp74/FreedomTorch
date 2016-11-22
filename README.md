@@ -1,4 +1,4 @@
-# How to use this boilerplate
+# FreedomTorch For python App Engine
 
 ### Todo List
- - Write this file
+ - Lots
