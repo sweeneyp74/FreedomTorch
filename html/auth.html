@@ -15,9 +15,43 @@ html, body { height: 100% }
   }
 </style>
 <body>
+<script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
 <script>
+//---------------------------------------------------
+//Firebase Setup
+//---------------------------------------------------
+  var config = {
+    // apiKey: "<API_KEY>",
+    // authDomain: "<PROJECT_ID>.firebaseapp.com",
+    databaseURL: "https://freedom-torch.firebaseio.com",
+    // storageBucket: "<BUCKET>.appspot.com",
+    // messagingSenderId: "<SENDER_ID>",
+  };
+  firebase.initializeApp(config);
+  //---------------------------------------------------
+
   var uid;
   var friends;
+  //callFirebase();
+
+function callFirebase(facebookid)
+{
+  var urlParams = new URLSearchParams(window.location.search);
+  var score = urlParams.get('score');
+  var fbid = facebookid;
+  console.log(score);
+  console.log(fbid);
+  var user = {fbid: fbid, score: score, createdAt: Date.now()}
+
+  var newUserKey = firebase.database().ref().child('users').push(user).key;
+  wait(1000);
+  window.location = "me";
+}
+
+
+
+
+
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
@@ -30,7 +64,8 @@ html, body { height: 100% }
       // Logged into your app and Facebook.
       console.log("Redirecting to dashboard");
       uid = response.authResponse.userID;
-      window.location = "me";
+      callFirebase(uid);
+
 
     } else if (response.status === 'not_authorized') {
       console.log("Need to verify app");
