@@ -1,1 +1,311 @@
-<h1>All about me</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Facebook Login JavaScript Example</title>
+<meta charset="UTF-8">
+
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freedom Torch</title>
+<link rel="stylesheet" href="css/foundation.css">
+<link rel="stylesheet" href="css/app.css">
+
+
+<meta property="og:title" content="Freedom Torch" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://www.freedomtorch.co" />
+<meta property="og:description" content="The only game that gives you a torch" />
+<meta property="og:image" content="http://www.freedomtorch.co/click-bait.png" />
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Freedom Torch" />
+<meta name="twitter:description" content="It's free to give a shit" />
+<meta name="twitter:image" content="http://www.freedomtorch.co/click-bait.png" />
+
+
+
+</head>
+
+
+<style>
+
+body {background-image: url(/img/dark_background.png); background-size: 100% }
+
+h1, h4,h5 { color: #fff }
+
+
+.torchWrapper {background-image: url(/img/flamescale.png);
+  background-size: contain; background-color: #555;
+  background-repeat: no-repeat; height: 300px;position: relative;
+  background-position: right; }
+
+#torch {width: 50%;position: absolute;zoom: 3;
+    bottom: 0px;min-width: 30px;
+    right: 30%;
+}
+
+#friends div {
+  background-image: url(/img/torch.png);
+    background-size: contain; background-color: #555;
+    background-repeat: no-repeat;     position: relative;
+    background-position: 12px;
+    padding: 2px 4px;
+    background-size: 30px;
+    margin-bottom: 10px;
+}
+#friends p{ margin-left: 50px;color: #fff}
+
+</style>
+<body>
+
+  <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+  <script>
+  //---------------------------------------------------
+  //Firebase Setup
+  //---------------------------------------------------
+   var config = {
+     // apiKey: "<API_KEY>",
+     // authDomain: "<PROJECT_ID>.firebaseapp.com",
+     databaseURL: "https://freedom-torch.firebaseio.com",
+     // storageBucket: "<BUCKET>.appspot.com",
+     // messagingSenderId: "<SENDER_ID>",
+   };
+   firebase.initializeApp(config);
+
+
+  var uid;
+  var friends;
+  var name = "user";
+  // This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    //console.log(response);
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      console.log("very nice");
+      uid = response.authResponse.userID;
+      testAPI();
+      getFriends();
+
+
+      // firebase.database().ref().child('users').orderByChild('fbid').equalTo(uid).once('value', function(snapshot){
+      //   console.log('use found',snapshot.val());
+      //   for
+      // })
+
+      $('#dashboard').show();
+
+      $('#welcomeModal').foundation('open');
+
+
+
+
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      console.log("not good2");
+      $('#quiz').show();
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '352487305143664',
+    cookie     : true,  // enable cookies to allow the server to access
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.8' // use graph api version 2.8
+  });
+
+  // Now that we've initialized the JavaScript SDK, we call
+  // FB.getLoginStatus().  This function gets the state of the
+  // person visiting this page and can return one of three states to
+  // the callback you provide.  They can be:
+  //
+  // 1. Logged into your app ('connected')
+  // 2. Logged into Facebook, but not your app ('not_authorized')
+  // 3. Not logged into Facebook and can't tell if they are logged into
+  //    your app or not.
+  //
+  // These three cases are handled in the callback function.
+
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+      var name = response.name;
+      document.getElementById('welcome').innerHTML =
+        'Welcome, ' + response.name + '!';
+    });
+  }
+
+function getFriends(){
+  FB.api(
+    "/"+ uid +"/friends",
+    function (response) {
+      if (response && !response.error) {
+        //console.log(response);
+        friends = response;
+
+        console.log(uid);
+        console.log(friends);
+
+        var index = 0;
+        var htmlString = ""
+
+
+        $.each(friends.data,function(index){
+          var friendName = friends.data[index].name
+
+          var $torch = $('<div><p>'+friendName+'</p></div>');
+
+          $('#friends').append($torch);
+
+
+        })
+
+
+
+
+      }
+    }
+);
+}
+
+
+
+</script>
+<div id="dashboard" class="content" style="display:none">
+
+  <body >
+    <div class="row">
+      <div class="large-12 columns" style="background-color: #333;margin: 20px 0;border: solid 1px #999;">
+        <h1 style="font-weight: 900; text-align:center">Freedom Torch</h1>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="large-6 medium-4 columns">
+        <h5>Your torch burns with moderation</h5>
+        <div class="row">
+          <div class="large-12 medium-6 columns torchWrapper">
+
+              <img src="/img/torch.png" id='torch' />
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+
+
+
+      <div class="large-6 medium-8 columns">
+        <h5>Friends that also torch</h5>
+
+
+        <div id="friends"></div>
+
+
+
+        <hr />
+
+      </div>
+
+
+    </div>
+
+
+    <div style="border: solid 4px black" class="reveal" id="welcomeModal" data-reveal data-close-on-click="true" data-animation-in="fade-in" data-animation-out="fade-out">
+      <h2>Torch Unlocked!</h2>
+      <p class='lead'>Congrats on taking the first step towards to expanding your civic knowledge. Your willingness to understand other points of view is awesome. </p>
+      <p>But you can always improve. And that's what your torch represents.</p>
+      <p><b>Freedom Torch</b> is a series of exercises aimed to expand empathy and the size of your torch prepresents your progress.</p>
+      <p>We hope you enjoy yourself.</p>
+      <a data-close class="button">SEE MY TORCH</a>
+
+    </div>
+
+    <div class="reveal" id="animatedModal10" data-reveal data-close-on-click="true" data-animation-in="spin-in" data-animation-out="spin-out">
+      <h1>Whoa, I'm dizzy!</h1>
+      <p class='lead'>There are many options for animating modals, check out the Motion UI library to see them all</p>
+      <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+
+</div>
+
+
+
+<script src="js/vendor/jquery.js"></script>
+<script src="js/vendor/what-input.js"></script>
+<script src="js/vendor/foundation.js"></script>
+<script src="js/app.js"></script>
+
+
+<script>
+
+var getUrlParameter = function getUrlParameter(sParam) {
+var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+    sURLVariables = sPageURL.split('&'),
+    sParameterName,
+    i;
+
+for (i = 0; i < sURLVariables.length; i++) {
+    sParameterName = sURLVariables[i].split('=');
+
+    if (sParameterName[0] === sParam) {
+        return sParameterName[1] === undefined ? true : sParameterName[1];
+    }
+}
+};
+
+var score = getUrlParameter('score');
+score = 10;
+// alert(score)
+
+if(score){
+$torch = $('#torch');
+$torch.width(score+'px');
+}
+
+</script>
+
+
+</body>
