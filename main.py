@@ -17,7 +17,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 class MainPage(webapp2.RequestHandler):
 	def get(self,urlKey):
-		templateValues = {}
+		templateValues = {'title':'Freedom Torch'}
 		path = os.path.join(os.path.dirname(__file__), 'html/home.html')
 		self.response.out.write(template.render(path, templateValues))
 
@@ -40,28 +40,10 @@ class MePage(webapp2.RequestHandler):
     def get(self,urlKey):
 
         templateValues = {
-            'title': 'hi'
+            'title': 'Freedom Torch'
         }
         path = os.path.join(os.path.dirname(__file__), 'html/me.html')
         self.response.out.write(template.render(path, templateValues))
-
-
-# ---------------------------------------------------------------------
-# Post Handler
-# ---------------------------------------------------------------------
-
-class PostHandler(webapp2.RequestHandler):
-
-	def post(self,urlKey):
-		queryString = self.request.get('queryString')
-
-        # Get IP ADDRESS
-        # self.request.remote_addr
-
-		templateValues = {}
-		path = os.path.join(os.path.dirname(__file__), 'html/translated.html')
-		self.response.out.write(template.render(path, templateValues))
-
 
 
 # ---------------------------------------------------------------------
@@ -78,7 +60,6 @@ class NotFoundPageHandler(webapp2.RequestHandler):
 # ---------------------------------------------------------------------
 
 app = webapp2.WSGIApplication([
-							  ('/post/(.*)', PostHandler),
 							  ('/()', MainPage),
                               ('/(auth)', AuthPage),
                               ('/(me)', MePage),
