@@ -76,12 +76,17 @@
 
      $('#dashboard').show();
 
-    //  $('#welcomeModal').foundation('open');
+     // Set Name
+     FB.api('/me', function(response) {
+       $('#name').html(response.name);
+     });
 
    } else {
-     alert('Redirect user to quiz page. not logged in')
+     window.location = '/';
    }
  }
+
+
 
  function getFriends(){
    FB.api(
@@ -89,35 +94,24 @@
      function (response) {
        if (response && !response.error) {
 
-         friends = response.data;
-        //  console.log(friends);
-         firebase.database().ref().child('v1/users').orderByChild("score").once('value',function(snapshot){
+         var myFriends = response.data;
+
+         firebase.database().ref().child('v1/users').orderByChild("score").on('value',function(snapshot){
            snapshot.forEach(function(data){
 
-
-              //  var $torch = $('<div><p>'+data.val().name+' has score of: '+ data.val().score+'</p></div>');
-              var opacity = (data.val().score/100)*1.2
-
+             console.log(myFriends)
+             console.log(data.getKey())
+             var result = $.grep(myFriends, function(f){ return f.id == data.getKey(); });
+             if(result.length > 0){
+               $('#noFriends').hide();
+               var opacity = (data.val().score/100)*1.2
                var $torch = $("<img class='column large-2 small-2 torchy'>").attr('src','/img/torch.png').css('opacity',opacity);
                var $friend = $("<div class='column large-10 small-10'><p>"+data.val().name+"</p></div>")
-
-
                var $friendRow = $("<div class='row friend'>").append($torch).append($friend);
-
                $('#friends').prepend($friendRow);
+             }
 
 
-
-            // var foundFriend = $.grep(friends, function(f){ return f.id == data.val().fbid; });
-
-
-            // if(foundFriend.length == 1) {
-            //   console.log(foundFriend)
-            //   var $torch = $('<div><p>'+foundFriend[0].name+' has score of: '+ data.val().score+'</p></div>');
-            //
-            //   $('#friends').append($torch);
-            // }
-              // Torch.friends.push(foundFriend)
 
            })
          });
@@ -151,7 +145,7 @@
 
         <div class="row">
           <div class="large-12 medium-6 columns torchWrapper">
-            <h5 id="name" >Kevin Habich</h5>
+            <h5 id="name" ></h5>
               <img src="/img/torch.png" id='torch' />
           </div>
         </div>
@@ -187,6 +181,7 @@
 
       <div class="large-6 medium-8 columns">
         <h1 class='title'>Your friends' torches</h1>
+        <h4 id="noFriends">Challenge your friends to Freedom Torch to see how they measure up to you!</h4>
         <div id="friends"></div>
       </div>
       <div class="fb-share-button" data-href="https://freedomtorch.co" data-layout="button_count" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffreedomtorch.co%2F&amp;src=sdkpreparse">Challenge your friends</a></div>

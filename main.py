@@ -28,7 +28,7 @@ class MainPage(webapp2.RequestHandler):
 
 class AuthPage(webapp2.RequestHandler):
 	def get(self,urlKey):
-		templateValues = {}
+		templateValues = {'title':'Torch Unlocked'}
 		path = os.path.join(os.path.dirname(__file__), 'html/auth.html')
 		self.response.out.write(template.render(path, templateValues))
 

@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Facebook Login JavaScript Example</title>
-<meta charset="UTF-8">
-</head>
+{% extends "base.html" %}
+
+{% block content %}
+
 <style>
-html, body { height: 100% }
-  html{
-    text-align: center;
-    overflow: hidden;
-  }
-  iframe{
-    border: none;
-  }
-</style>
-<body>
+.reveal-overlay {
+    background-color: rgba(10, 10, 10, 0.74);
+
+}
+    </style>
 <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
 <script>
 //---------------------------------------------------
@@ -32,23 +25,31 @@ html, body { height: 100% }
 
   var uid;
   var friends;
-  //callFirebase();
+
 
 function callFirebase(facebookid)
 {
   var urlParams = new URLSearchParams(window.location.search);
   var score = urlParams.get('score');
-  var fbid = facebookid;
-  console.log(score);
-  console.log(fbid);
-  var user = {fbid: fbid, score: score, createdAt: Date.now()}
 
-  var newUserKey = firebase.database().ref().child('users').push(user).key;
-  wait(1000);
-  window.location = "me";
+  setUser(score);
+
 }
 
 
+  function setUser(score) {
+    FB.api('/me', function(response) {
+      var user = {fbid: response.id, score: score, name: response.name, createdAt: Date.now()}
+
+      var newUserKey = firebase.database().ref().child('v1/users').child(response.id).update(user).key;
+
+      setTimeout(function(){
+          window.location = "me";
+      },1000)
+
+
+    });
+  }
 
 
 
@@ -62,9 +63,10 @@ function callFirebase(facebookid)
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-      console.log("Redirecting to dashboard");
+      console.log("Redirecting to dashboard",response);
       uid = response.authResponse.userID;
       callFirebase(uid);
+
 
 
     } else if (response.status === 'not_authorized') {
@@ -74,6 +76,7 @@ function callFirebase(facebookid)
         'into this app.';
     } else {
       console.log("Need to Login");
+      $('#welcomeModal').foundation('open');
       //need to login buddy
       document.getElementById('status').innerHTML = 'Please log ' +
         'into Facebook.';
@@ -126,10 +129,89 @@ function callFirebase(facebookid)
   }
 
 
+
 </script>
 
 
-<fb:login-button id="login-but" scope="public_profile,email,user_friends" onlogin="checkLoginState();"></fb:login-button>
-<div id="status"></div>
+<div id="dashboard" class="content" >
 
-</body>
+  <body >
+    <div class="row">
+      <div class="large-12 columns titleWrapper">
+        <h1 class='title text-center'>Freedom Torch</h1>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="large-6 medium-4 columns">
+
+        <div class="row">
+          <div class="large-12 medium-6 columns torchWrapper">
+            <h5 id="name" >Log in to see this</h5>
+              <img src="/img/torch.png" id='torch' />
+          </div>
+        </div>
+
+        <!-- What is this? -->
+        <div class="row">
+          <div class="large-12 medium-6 columns ">
+            <h5>&nbsp;</h5>
+            <h5>Lighting a path of knowledge & compassion</h5>
+              <p>
+                We believe our nation has been scientifically divided into
+                two halves that hold beliefs so strong, they are unwilling
+                to open up to the possibility of something new. This belief
+                has been called a <a href="http://www.ted.com/talks/eli_pariser_beware_online_filter_bubbles" target="_blank">filter bubble</a>
+                and it creates a lens through which all new information is judged.
+                <br><br>
+                Please come back as we develop more games that aim to expand basic
+                civic knowledge and challenge players to engage with friends at
+                polar ends of the spectrum. If you would like to get more involved,
+                please check out the following links.
+                <br><br>
+                <a href="https://github.com/sweeneyp74/FreedomTorch">Github</a>
+                <br>
+                <a href="https://www.facebook.com/freedomtorch11/?fref=ts">Facebook</a>
+                <br>
+
+                <br>
+              </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="large-6 medium-8 columns">
+        <h1 class='title'>Your friends' torches</h1>
+        <div id="friends"></div>
+      </div>
+      <div class="fb-share-button" data-href="https://freedomtorch.co" data-layout="button_count" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffreedomtorch.co%2F&amp;src=sdkpreparse">Challenge your friends</a></div>
+
+    </div>
+
+
+    <div style="border: solid 4px black" class="reveal" id="welcomeModal" data-close-on-esc="false" data-close-on-click="false" data-reveal data-close-on-click="true" data-animation-in="fade-in" data-animation-out="fade-out">
+      <p style="font-size: 205%;" class='lead text-center'>YOU UNLOCKED YOUR <br><span style="color: #fb9d4d">TORCH</span></p>
+      <p>
+        The goal with Freedom Torch is to grow your flame. We planned a bunch
+        of fun exercises that let you grow your flame by demonstrating your
+        civic knowledge and ability to see other people's perspective.
+        <br><br>
+        Please connect with facebook to see how big your inital flame is.
+      </p>
+
+
+      <fb:login-button id="login-but" data-size="xlarge" scope="public_profile,email,user_friends" onlogin="checkLoginState();"></fb:login-button>
+
+
+
+
+    </div>
+
+
+
+</div>
+
+
+{% endblock %}
