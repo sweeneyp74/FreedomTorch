@@ -1,0 +1,63 @@
+
+body {background-image: url(/img/dark_background.png); background-size: 100% }
+
+h1, h4,h5,p { color: #fff }
+
+.titleWrapper {
+  background-color: #3e3e3e;
+  margin: 2%;
+  border: solid 1px #6b6b6b;
+  width: 96%;
+  margin-left: 2%;
+}
+.title {
+  font-weight: 200;
+
+  letter-spacing: 0.09em;
+  margin: 6px;
+}
+
+
+
+.torchWrapper {
+  background-image: url(/img/flamescale.png);
+  background-size: 115px 82%;
+  background-color: #555;
+  background-repeat: no-repeat;
+  height: 300px;
+  position: relative;
+  background-position: right+13px bottom+14px;
+  width: 96%;
+  margin-left: 2%;
+  border: solid 1px #6b6b6b;
+}
+
+#name {
+  font-weight: 200;
+  text-align: center;
+  letter-spacing: 0.09em;
+  margin: 6px;
+  border-bottom: solid 1px #717171;
+  padding-bottom: 6px;
+}
+
+#torch {
+  position: absolute;
+  bottom: 0px;
+  right: 42%;
+  height:100px;
+}
+
+
+.friend.row {
+  border-bottom: solid 1px #636363;
+margin: 2%;
+}
+#friends p{
+  margin-left: 0px;
+  color: #909090;
+  font-size: 26px;
+  margin-top: 4px;
+  font-weight: 200;
+  letter-spacing: 0.06em;
+}

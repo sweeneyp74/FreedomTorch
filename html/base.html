@@ -3,36 +3,30 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-	<!--Add the title of your typeform below-->
-	<title>Are You Politically Informed?</title>
+
+	<title>{{ title }}</title>
 
 
+	<link rel="stylesheet" href="css/foundation.css">
+	
+	<link href="/css/torch.css" rel="stylesheet" media="screen">
 
-	<link href="/css/style.css" rel="stylesheet" media="screen">
 
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<!--CSS styles that ensure your typeform takes up all the available screen space (DO NOT EDIT!)-->
-	<style type="text/css">
-		html{
-			margin: 0;
-			height: 100%;
-			overflow: hidden;
-		}
-		iframe{
-			position: absolute;
-			left:0;
-			right:0;
-			bottom:0;
-			top:0;
-			border:0;
-		}
-	</style>
 
 </head>
 <body>
 
 
 	{% block content %}input{% endblock %}
+
+
+
+
+
+	<script src="js/vendor/jquery.js"></script>
+	<script src="js/vendor/what-input.js"></script>
+	<script src="js/vendor/foundation.js"></script>
+	<script src="js/app.js"></script>
 
 
 </body>

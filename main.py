@@ -6,19 +6,8 @@ import os
 from google.appengine.ext.webapp import template
 import datetime
 import urllib
-from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-
-
-# ---------------------------------------------------------------------
-# Define Models
-# ---------------------------------------------------------------------
-
-class DataObject(db.Model):
-    created_at = db.DateTimeProperty(auto_now_add=True)
-    name = db.StringProperty(multiline=False)
-    description = db.StringProperty(multiline=True)
 
 
 
@@ -44,12 +33,15 @@ class AuthPage(webapp2.RequestHandler):
 		self.response.out.write(template.render(path, templateValues))
 
 # ---------------------------------------------------------------------
-# Me Page
+# Me Page (Dashboard)
 # ---------------------------------------------------------------------
 
 class MePage(webapp2.RequestHandler):
     def get(self,urlKey):
-        templateValues = {}
+
+        templateValues = {
+            'title': 'hi'
+        }
         path = os.path.join(os.path.dirname(__file__), 'html/me.html')
         self.response.out.write(template.render(path, templateValues))
 
