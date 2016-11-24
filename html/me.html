@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+  <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+  <script>
+
+  //---------------------------------------------------
+  // Firebase Setup
+  //---------------------------------------------------
+   var config = {
+     // apiKey: "<API_KEY>",
+     // authDomain: "<PROJECT_ID>.firebaseapp.com",
+     databaseURL: "https://freedom-torch.firebaseio.com",
+     // storageBucket: "<BUCKET>.appspot.com",
+     // messagingSenderId: "<SENDER_ID>",
+   };
+   firebase.initializeApp(config);
+
+   //---------------------------------------------------
+   // Facebook Setup
+   //---------------------------------------------------
+
+   // Load the SDK asynchronously
+   (function(d, s, id) {
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) return;
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+   window.fbAsyncInit = function() {
+   FB.init({
+     appId      : '352487305143664',
+     cookie     : true,  // enable cookies to allow the server to access
+                         // the session
+     xfbml      : true,  // parse social plugins on this page
+     version    : 'v2.8' // use graph api version 2.8
+   });
+
+   // Now that we've initialized the JavaScript SDK, we call
+   // FB.getLoginStatus().  This function gets the state of the
+   // person visiting this page and can return one of three states to
+   // the callback you provide.  They can be:
+   //
+   // 1. Logged into your app ('connected')
+   // 2. Logged into Facebook, but not your app ('not_authorized')
+   // 3. Not logged into Facebook and can't tell if they are logged into
+   //    your app or not.
+   //
+   // These three cases are handled in the callback function.
+
+   FB.getLoginStatus(function(response) {
+     statusChangeCallback(response);
+   });
+
+ };
+
+ function statusChangeCallback(response) {
+  //  console.log('statusChangeCallback');
+   //console.log(response);
+   // The response object is returned with a status field that lets the
+   // app know the current login status of the person.
+   // Full docs on the response object can be found in the documentation
+   // for FB.getLoginStatus().
+   if (response.status === 'connected') {
+     // Logged into your app and Facebook.
+    //  console.log("very nice");
+     uid = response.authResponse.userID;
+     getScore(uid)
+
+    //  testAPI();
+     getFriends();
+
+     $('#dashboard').show();
+
+     // Set Name
+     FB.api('/me', function(response) {
+       $('#name').html(response.name);
+     });
+
+   } else {
+     window.location = '/';
+   }
+ }
+
+
+
+ function getFriends(){
+   FB.api(
+     "/"+ uid +"/friends",
+     function (response) {
+       if (response && !response.error) {
+
+         var myFriends = response.data;
+
+         firebase.database().ref().child('v1/users').orderByChild("score").on('value',function(snapshot){
+           snapshot.forEach(function(data){
+
+             console.log(myFriends)
+             console.log(data.getKey())
+             var result = $.grep(myFriends, function(f){ return f.id == data.getKey(); });
+             if(result.length > 0){
+               $('#noFriends').hide();
+               var opacity = (data.val().score/100)*1.2
+               var $torch = $("<img class='column large-2 small-2 torchy'>").attr('src','/img/torch.png').css('opacity',opacity);
+               var $friend = $("<div class='column large-10 small-10'><p>"+data.val().name+"</p></div>")
+               var $friendRow = $("<div class='row friend'>").append($torch).append($friend);
+               $('#friends').prepend($friendRow);
+             }
+
+
+
+           })
+         });
+
+       }
+     }
+   );
+ }
+ function getScore(uid) {
+
+  firebase.database().ref().child('v1/users').child(uid).once('value',  function(data){
+      // alert(data.val().name)
+  });
+ }
+
+
+</script>
+
+<div id="dashboard" class="content" style="display:none">
+
+  <body >
+    <div class="row">
+      <div class="large-12 columns titleWrapper">
+        <h1 class='title text-center'>Freedom Torch</h1>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="large-6 medium-4 columns">
+
+        <div class="row">
+          <div class="large-12 medium-6 columns torchWrapper">
+            <h5 id="name" ></h5>
+              <img src="/img/torch.png" id='torch' />
+          </div>
+        </div>
+
+        <!-- What is this? -->
+        <div class="row">
+          <div class="large-12 medium-6 columns ">
+            <h5>&nbsp;</h5>
+            <h5>Lighting a path of knowledge & compassion</h5>
+              <p>
+                We believe our nation has been scientifically divided into
+                two halves that hold beliefs so strong, they are unwilling
+                to open up to the possibility of something new. This belief
+                has been called a <a href="http://www.ted.com/talks/eli_pariser_beware_online_filter_bubbles" target="_blank">filter bubble</a>
+                and it creates a lens through which all new information is judged.
+                <br><br>
+                Please come back as we develop more games that aim to expand basic
+                civic knowledge and challenge players to engage with friends at
+                polar ends of the spectrum. If you would like to get more involved,
+                please check out the following links.
+                <br><br>
+                <a href="https://github.com/sweeneyp74/FreedomTorch">Github</a>
+                <br>
+                <a href="https://www.facebook.com/freedomtorch11/?fref=ts">Facebook</a>
+                <br>
+
+                <br>
+              </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="large-6 medium-8 columns">
+        <h1 class='title'>Your friends' torches</h1>
+        <h4 id="noFriends">Challenge your friends to Freedom Torch to see how they measure up to you!</h4>
+        <div id="friends"></div>
+      </div>
+      <div class="fb-share-button" data-href="https://freedomtorch.co" data-layout="button_count" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffreedomtorch.co%2F&amp;src=sdkpreparse">Challenge your friends</a></div>
+
+    </div>
+
+
+    <div style="border: solid 4px black" class="reveal" id="welcomeModal" data-reveal data-close-on-click="true" data-animation-in="fade-in" data-animation-out="fade-out">
+      <h2>Torch Unlocked!</h2>
+      <p class='lead'>Congrats on taking the first step towards to expanding your civic knowledge. Your willingness to understand other points of view is awesome. </p>
+      <p>But you can always improve. And that's what your torch represents.</p>
+      <p><b>Freedom Torch</b> is a series of exercises aimed to expand empathy and the size of your torch prepresents your progress.</p>
+      <p>We hope you enjoy yourself.</p>
+      <a data-close class="button">SEE MY TORCH</a>
+
+    </div>
+
+    <div class="reveal" id="animatedModal10" data-reveal data-close-on-click="true" data-animation-in="spin-in" data-animation-out="spin-out">
+      <h1>Whoa, I'm dizzy!</h1>
+      <p class='lead'>There are many options for animating modals, check out the Motion UI library to see them all</p>
+      <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+
+</div>
+
+
+
+{% endblock %}
